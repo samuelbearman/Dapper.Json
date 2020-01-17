@@ -14,7 +14,7 @@
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\..\src\Dapper.Json\Dapper.Json.csproj" />
+    <ProjectReference Include="..\..\..\src\Dapper.Json\Dapper.Json.csproj" />
   </ItemGroup>
 
 </Project>
