@@ -1,20 +1,14 @@
 using System;
 using System.Collections;
-using System.Collections.Generic;
 using System.Linq;
 using System.Reflection;
-using System.Text.RegularExpressions;
 
-namespace Dapper.Json.QueryBuilder
+namespace Dapper.Json
 {
-    public static class RawSql
+    public static class JsonSql
     {
-        public static string Build<T>(T template, bool isAggregate = false, bool IsPrimitive = false)
+        public static string Build<T>(bool isAggregate = false, bool IsPrimitive = false)
         {
-            // Assume being passed the Aggreagte 
-            List<QueryObject> withOneToMany = new List<QueryObject>();
-            List<QueryObject> withOneToOne = new List<QueryObject>();
-
             string result = "";
             PropertyInfo[] properties = null;
 
@@ -36,7 +30,7 @@ namespace Dapper.Json.QueryBuilder
                     foreach (var childProperty in childProperties)
                     {
                         bool isPrimitive = IsSimple(childProperty.PropertyType);
-                        nestedQuery = Build(childProperty.PropertyType, false, isPrimitive);
+                        nestedQuery = Build<T>(false, isPrimitive);
                     }
 
                     string parentAlias = string.Concat(typeof(T).Name.Where(c => c >= 'A' && c <= 'Z'));
@@ -50,8 +44,6 @@ namespace Dapper.Json.QueryBuilder
                         JoiningColumnName = property.Name,
                         ParentPropertyName = property.Name.Remove(property.Name.Length - 2),
                     };
-
-                    withOneToOne.Add(queryObj);
 
                     result = OneToOneQueryBlock(queryObj, nestedQuery, result);
                 }
@@ -67,7 +59,7 @@ namespace Dapper.Json.QueryBuilder
                     foreach (var childProperty in collectionTypeProperties)
                     {
                         bool isPrimitive = IsSimple(childProperty.PropertyType);
-                        nestedQuery = Build(childProperty.PropertyType, false, isPrimitive);
+                        nestedQuery = Build<T>(false, isPrimitive);
                     }
 
                     string parentAlias = string.Concat(typeof(T).Name.Where(c => c >= 'A' && c <= 'Z'));
@@ -81,8 +73,6 @@ namespace Dapper.Json.QueryBuilder
                         JoiningColumnName = typeof(T).Name + "Id",
                         ParentPropertyName = property.Name,
                     };
-
-                    withOneToMany.Add(queryObj);
 
                     result = OneToManyQueryBlock(queryObj, nestedQuery, result);
                 }

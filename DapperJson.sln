@@ -3,13 +3,9 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio Version 16
 VisualStudioVersion = 16.0.29709.97
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "src", "src", "{C86A0C63-4F10-40A3-8503-6B8C709568CA}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Dapper.Json", "Dapper.Json\Dapper.Json.csproj", "{FE4583CF-FF4B-4B0A-84ED-E6E581368F9E}"
 EndProject
-Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "tests", "tests", "{1CE0C134-517D-41D0-97A7-16DA3662D34D}"
-EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Dapper.Json", "src\Dapper.Json\Dapper.Json.csproj", "{FE4583CF-FF4B-4B0A-84ED-E6E581368F9E}"
-EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Dapper.Json.Tests", "tests\Dapper.Json.UnitTests\Dapper.Json.Tests\Dapper.Json.Tests.csproj", "{E72C8512-32C3-4526-9CA7-1609AAD2452A}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Dapper.Json.Tests", "Dapper.Json.Tests\Dapper.Json.Tests.csproj", "{9AE2B301-F006-43B5-B1D4-5F97A31F0A5C}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -25,6 +21,10 @@ Global
 		{E72C8512-32C3-4526-9CA7-1609AAD2452A}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{E72C8512-32C3-4526-9CA7-1609AAD2452A}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{E72C8512-32C3-4526-9CA7-1609AAD2452A}.Release|Any CPU.Build.0 = Release|Any CPU
+		{9AE2B301-F006-43B5-B1D4-5F97A31F0A5C}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{9AE2B301-F006-43B5-B1D4-5F97A31F0A5C}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{9AE2B301-F006-43B5-B1D4-5F97A31F0A5C}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{9AE2B301-F006-43B5-B1D4-5F97A31F0A5C}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
