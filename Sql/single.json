@@ -1,0 +1,21 @@
+{
+    "ParentId": 1,
+    "Description": "Parent Test",
+    "SiblingId": 1,
+    "Children": [
+        {
+            "ChildId": 1,
+            "Description": "Children Test",
+            "ParentId": 1
+        },
+        {
+            "ChildId": 2,
+            "Description": "Children Test 2",
+            "ParentId": 1
+        }
+    ],
+    "Sibling": {
+        "SiblingId": 1,
+        "Description": "Sibling Test"
+    }
+}

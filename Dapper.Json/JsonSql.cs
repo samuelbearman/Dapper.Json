@@ -81,13 +81,92 @@ namespace Dapper.Json
             if (isAggregate)
             {
                 string tableAlias = string.Concat(typeof(T).Name.Where(c => c >= 'A' && c <= 'Z'));
-                result = AggregateQueryBlock(typeof(T).Name + "s", tableAlias, result);
+                result = AggregateQueryBlockSingle(typeof(T).Name + "s", tableAlias, result);
             }
 
             return result;
         }
+        public static string BuildCollection<T>(bool isAggregate = false, bool IsPrimitive = false)
+        {
+            string result = "";
+            PropertyInfo[] properties = null;
 
-        public static bool IsSimple(Type type)
+            if (IsPrimitive)
+                properties = new PropertyInfo[] { };
+            else
+                properties = typeof(T).GetProperties();
+
+            foreach (var property in properties)
+            {
+                if (property.Name.Contains("Id") && property.Name != typeof(T).Name + "Id")
+                {
+                    // One To One Id
+                    var childClass = properties.SingleOrDefault(x => x.Name == property.Name.Remove(property.Name.Length - 2) && x.GetType().IsClass);
+
+                    var childProperties = childClass.PropertyType.GetProperties();
+                    string nestedQuery = "";
+
+                    foreach (var childProperty in childProperties)
+                    {
+                        bool isPrimitive = IsSimple(childProperty.PropertyType);
+                        nestedQuery = Build<T>(false, isPrimitive);
+                    }
+
+                    string parentAlias = string.Concat(typeof(T).Name.Where(c => c >= 'A' && c <= 'Z'));
+                    string childAlias = string.Concat(property.Name.Remove(property.Name.Length - 2).Where(c => c >= 'A' && c <= 'Z'));
+
+                    var queryObj = new QueryObject()
+                    {
+                        ChildAliasName = childAlias,
+                        ParentAliasName = parentAlias,
+                        ChildTableName = property.Name.Remove(property.Name.Length - 2) + "s",
+                        JoiningColumnName = property.Name,
+                        ParentPropertyName = property.Name.Remove(property.Name.Length - 2),
+                    };
+
+                    result = OneToOneQueryBlock(queryObj, nestedQuery, result);
+                }
+
+                if (property.PropertyType != typeof(string) && typeof(IEnumerable).IsAssignableFrom(property.PropertyType))
+                {
+                    // One To Many
+                    var collectionType = property.PropertyType.GetGenericArguments()[0];
+
+                    var collectionTypeProperties = collectionType.GetProperties();
+                    string nestedQuery = "";
+
+                    foreach (var childProperty in collectionTypeProperties)
+                    {
+                        bool isPrimitive = IsSimple(childProperty.PropertyType);
+                        nestedQuery = Build<T>(false, isPrimitive);
+                    }
+
+                    string parentAlias = string.Concat(typeof(T).Name.Where(c => c >= 'A' && c <= 'Z'));
+                    string childAlias = string.Concat(property.Name.Remove(property.Name.Length - 2).Where(c => c >= 'A' && c <= 'Z'));
+
+                    var queryObj = new QueryObject()
+                    {
+                        ChildAliasName = childAlias,
+                        ParentAliasName = parentAlias,
+                        ChildTableName = property.Name,
+                        JoiningColumnName = typeof(T).Name + "Id",
+                        ParentPropertyName = property.Name,
+                    };
+
+                    result = OneToManyQueryBlock(queryObj, nestedQuery, result);
+                }
+            }
+
+            if (isAggregate)
+            {
+                string tableAlias = string.Concat(typeof(T).Name.Where(c => c >= 'A' && c <= 'Z'));
+                result = AggregateQueryBlockMultiple(typeof(T).Name + "s", tableAlias, result);
+            }
+
+            return result;
+        }
+        
+        private static bool IsSimple(Type type)
         {
             var typeInfo = type.GetTypeInfo();
             if (typeInfo.IsGenericType && typeInfo.GetGenericTypeDefinition() == typeof(Nullable<>))
@@ -101,7 +180,7 @@ namespace Dapper.Json
                 type.Equals(typeof(decimal));
         }
 
-        private static string AggregateQueryBlock(string tableName, string tableAlias, string nestedBlocks)
+        private static string AggregateQueryBlockMultiple(string tableName, string tableAlias, string nestedBlocks)
         {
             string aggregateQuery;
 
@@ -110,13 +189,36 @@ namespace Dapper.Json
                 aggregateQuery = $@"
                 select {tableAlias}.*
                 from {tableName} {tableAlias}
+			    for json path";
+            }
+            else
+            {
+                aggregateQuery = $@"
+                select {tableAlias}.*,
+			    {nestedBlocks}
+                from {tableName} {tableAlias}
+			    for json path";
+            }
+
+            return aggregateQuery;
+        }
+
+        private static string AggregateQueryBlockSingle(string tableName, string tableAlias, string nestedBlocks)
+        {
+            string aggregateQuery;
+
+            if (string.IsNullOrWhiteSpace(nestedBlocks))
+            {
+                aggregateQuery = $@"
+                select top 1 {tableAlias}.*
+                from {tableName} {tableAlias}
 			    for 
                     json path, without_array_wrapper";
             }
             else
             {
                 aggregateQuery = $@"
-                select {tableAlias}.*,
+                select top 1 {tableAlias}.*,
 			    {nestedBlocks}
                 from {tableName} {tableAlias}
 			    for 

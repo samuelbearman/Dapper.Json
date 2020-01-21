@@ -1,9 +1,9 @@
 using System.Data;
 using Newtonsoft.Json;
 
-namespace Dapper.Json.Tests
+namespace Dapper.Json
 {
-    public class TypeHandler<T> : SqlMapper.TypeHandler<T>
+    public class JsonTypeHandler<T> : SqlMapper.TypeHandler<T>
     {
         public override T Parse(object value)
         {
