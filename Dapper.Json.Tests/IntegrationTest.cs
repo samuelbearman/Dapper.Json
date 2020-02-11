@@ -7,10 +7,12 @@ namespace Dapper.Json.Tests
 {
     public class IntegrationTest
     {
+        private string connString = "Server=localhost;Initial Catalog=Dapper.Json;Integrated Security=true;";
+
         [Fact]
         public void SqlJsonMapper_UnderTheHoodComponentsTest()
         {
-            using(var conn = new SqlConnection("Server=DESKTOP-SJ0E2JG\\TESTING;Initial Catalog=Dapper.Json;Integrated Security=true;"))
+            using(var conn = new SqlConnection(connString))
             {
                 SqlMapper.AddTypeHandler(new JsonTypeHandler<Parent>());
                 
@@ -27,7 +29,7 @@ namespace Dapper.Json.Tests
         [Fact]
         public void SqlJsonMapper_ExtensionSingleTest()
         {
-            using(var conn = new SqlConnection("Server=DESKTOP-SJ0E2JG\\TESTING;Initial Catalog=Dapper.Json;Integrated Security=true;"))
+            using(var conn = new SqlConnection(connString))
             {
                 var result = conn.QuerySingleJson<Parent>();
 
@@ -38,9 +40,31 @@ namespace Dapper.Json.Tests
         [Fact]
         public void SqlJsonMapper_ExtensionMultipleTest()
         {
-            using(var conn = new SqlConnection("Server=DESKTOP-SJ0E2JG\\TESTING;Initial Catalog=Dapper.Json;Integrated Security=true;"))
+            using(var conn = new SqlConnection(connString))
             {
                 var result = conn.QueryJson<Parent>();
+
+                result.ShouldNotBeNull();
+            }
+        }
+
+        [Fact]
+        public void SqlJsonMapper_ExtensionSingleTest_More()
+        {
+            using (var conn = new SqlConnection(connString))
+            {
+                var result = conn.QuerySingleJson<Account>();
+
+                result.ShouldNotBeNull();
+            }
+        }
+
+        [Fact]
+        public void SqlJsonMapper_ExtensionMultipleTest_More()
+        {
+            using (var conn = new SqlConnection(connString))
+            {
+                var result = conn.QueryJson<Account>();
 
                 result.ShouldNotBeNull();
             }

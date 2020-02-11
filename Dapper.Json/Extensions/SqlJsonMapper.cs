@@ -8,8 +8,7 @@ namespace Dapper.Json.Extensions
     {
         public static IEnumerable<T> QueryJson<T>(this SqlConnection cnn, string sqlFilter = "")
         {
-            SqlMapper.AddTypeHandler(typeof(T), new JsonCollectionTypeHandler<T>());
-            // SqlMapper.AddTypeHandler(new TypeHandler<T>());
+            SqlMapper.AddTypeHandler(typeof(IEnumerable<T>), new JsonCollectionTypeHandler<T>());
 
             var sql = JsonSql.BuildCollection<T>(true, false);
             var result = cnn.Query<T>(sql);
