@@ -5,7 +5,7 @@ using Dapper.Json.Extensions;
 
 namespace Dapper.Json.Tests
 {
-    public class IntegrationTest
+    public class IntegrationTests
     {
         private string connString = "Server=localhost;Initial Catalog=Dapper.Json;Integrated Security=true;";
 

@@ -31,7 +31,7 @@ namespace Dapper.Json.Tests
             AccountType = new AccountType()
             {
                 AccountTypeId = 44,
-                Decription = "This is a proper account type"
+                Description = "This is a proper account type"
             };
         }
 
