@@ -51,5 +51,7 @@ namespace Dapper.Json.Tests
     {
         public int ChildId { get; set; }
         public string Description { get; set; }
+        public int ParentId { get; set; }
+
     }
 }

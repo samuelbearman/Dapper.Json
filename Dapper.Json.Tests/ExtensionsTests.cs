@@ -6,14 +6,16 @@ using Xunit;
 using Dapper.Json.Extensions;
 using Shouldly;
 using Dapper.Extensions;
+using System.Threading.Tasks;
 
 namespace Dapper.Json.Tests
 {
     public class ExtensionsTests
     {
-        private string connString = "Server=localhost;Initial Catalog=Dapper.Json;Integrated Security=true;";
+        private readonly string connString = "Server=localhost;Initial Catalog=Dapper.Json;Integrated Security=true;";
+
         [Fact]
-        public void CustomExtensions_NaiveUpdate_ShouldUpdate()
+        public async Task CustomExtensions_NaiveUpdateAsync_ShouldUpdateDescription()
         {
             using (var conn = new SqlConnection(connString))
             {
@@ -25,11 +27,26 @@ namespace Dapper.Json.Tests
 
                 result.Description = "This has been updated";
 
-                conn.NaiveUpdate(result);
+                await conn.NaiveUpdateAsync(result);
 
                 result = conn.QuerySingleOrDefault<Parent>("select * from Parents where ParentId = 1");
 
                 result.Description.ShouldNotBe(originalDescription);
+            }
+        }
+
+        [Fact]
+        public async Task CustomExtensions_InsertAsync_ShouldInsertNewRecord()
+        {
+            using (var conn = new SqlConnection(connString))
+            {
+                var parent = new Parent()
+                {
+                    Description = "Hello",
+                    SiblingId = 1
+                };
+
+                await conn.InsertAsync(parent);
             }
         }
     }
