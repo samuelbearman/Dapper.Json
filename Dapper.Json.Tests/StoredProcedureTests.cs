@@ -20,7 +20,7 @@ namespace Dapper.Json.Tests
         {
             StoredProceduresJson<Parent>.Init(connString);
 
-            using(var conn = new SqlConnection(connString))
+            using (var conn = new SqlConnection(connString))
             {
                 DynamicParameters parameters = new DynamicParameters();
                 parameters.Add("Id", 1);
@@ -35,6 +35,12 @@ namespace Dapper.Json.Tests
                 result.ShouldNotBeNull();
 
             }
+        }
+
+        [Fact]
+        public void Test()
+        {
+            var test = JsonStoredProcedures.BuildJsonSelectSql<Parent>();
         }
     }
 }

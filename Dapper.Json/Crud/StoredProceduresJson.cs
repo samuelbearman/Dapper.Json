@@ -42,7 +42,7 @@ namespace Dapper.Json.Crud
 
         private static void Insert(SqlConnection conn)
         {
-            string jsonSelect = "";
+            string jsonSelect = JsonStoredProcedures.BuildJsonSelectSql<T>();
             string insert = "";
             string sourceSelect = "";
             var entityName = typeof(T).Name;
