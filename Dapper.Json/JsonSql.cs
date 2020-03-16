@@ -7,7 +7,7 @@ namespace Dapper.Json
 {
     public static class JsonSql
     {
-        public static string Build<T>(bool isAggregate = false, bool IsPrimitive = false)
+        public static string Build<T>(bool isAggregate = false, bool IsPrimitive = false, bool forStoredProc = false)
         {
             string result = "";
             PropertyInfo[] properties = null;
@@ -81,7 +81,14 @@ namespace Dapper.Json
             if (isAggregate)
             {
                 string tableAlias = string.Concat(typeof(T).Name.Where(c => c >= 'A' && c <= 'Z'));
-                result = AggregateQueryBlockSingle(typeof(T).Name + "s", tableAlias, result);
+                string sqlWhereClause = "";
+                if (forStoredProc)
+                {
+                    var alias = string.Concat(typeof(T).Name.Where(c => c >= 'A' && c <= 'Z'));
+                    sqlWhereClause = $"where {tableAlias}.{typeof(T).Name}Id = @Id";
+                }
+                
+                result = AggregateQueryBlockSingle(typeof(T).Name + "s", tableAlias, result, sqlWhereClause);
             }
 
             return result;
@@ -203,7 +210,7 @@ namespace Dapper.Json
             return aggregateQuery;
         }
 
-        private static string AggregateQueryBlockSingle(string tableName, string tableAlias, string nestedBlocks)
+        private static string AggregateQueryBlockSingle(string tableName, string tableAlias, string nestedBlocks, string whereClause)
         {
             string aggregateQuery;
 
@@ -212,6 +219,7 @@ namespace Dapper.Json
                 aggregateQuery = $@"
                 select top 1 {tableAlias}.*
                 from {tableName} {tableAlias}
+                {whereClause}
 			    for 
                     json path, without_array_wrapper";
             }
@@ -221,6 +229,7 @@ namespace Dapper.Json
                 select top 1 {tableAlias}.*,
 			    {nestedBlocks}
                 from {tableName} {tableAlias}
+                {whereClause}
 			    for 
                     json path, without_array_wrapper";
             }

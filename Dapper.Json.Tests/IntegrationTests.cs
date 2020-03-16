@@ -7,7 +7,7 @@ namespace Dapper.Json.Tests
 {
     public class IntegrationTests
     {
-        private string connString = "Server=localhost;Initial Catalog=Dapper.Json;Integrated Security=true;";
+        private readonly string connString = "Server=localhost;Initial Catalog=Dapper.Json;Integrated Security=true;";
 
         [Fact]
         public void SqlJsonMapper_UnderTheHoodComponentsTest()

@@ -4,7 +4,7 @@ using System.Text;
 
 namespace Dapper.Json
 {
-    public class QueryObject
+    internal class QueryObject
     {
         public string ChildTableName { get; set; }
         public string ChildAliasName { get; set; }
